@@ -1,0 +1,28 @@
+{% extends "layouts/auth.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block auth_content %}
+
+<h1>Login</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+<p>
+    <a href="{% url 'password_reset' %}">
+        Forgot Password?
+    </a>
+</p>
+    
+<br><br>
+
+    <button type="submit">
+        Login
+    </button>
+</form>
+
+{% endblock %}

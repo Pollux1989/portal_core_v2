@@ -1,0 +1,19 @@
+{% extends "layouts/public.html" %}
+
+{% block content %}
+
+<div class="app-layout">
+
+    <aside>
+        {% block sidebar %}
+        {% endblock %}
+    </aside>
+
+    <main>
+        {% block app_content %}
+        {% endblock %}
+    </main>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block sidebar %}
+
+<h3>Portal Core</h3>
+
+<a href="{% url 'logout' %}">
+    Logout
+</a>
+<br><br>
+<a href="{% url 'profile' %}">
+    Profile
+</a>
+<br><br>
+<a href="{% url 'password_change' %}">
+Change Password
+</a>
+{% endblock %}
+
+{% block app_content %}
+
+<h1>Dashboard</h1>
+
+<p>
+Authentication system is working.
+</p>
+
+{% endblock %}
