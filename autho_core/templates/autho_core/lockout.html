@@ -1,0 +1,62 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Cuenta Bloqueada - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card lockout-card">
+    <div class="lockout-icon">
+        <i class="bi bi-lock-fill"></i>
+    </div>
+
+    <div class="auth-header">
+        <h1 class="auth-title">Cuenta Temporalmente Bloqueada</h1>
+        <p class="auth-subtitle">Por seguridad, tu cuenta ha sido bloqueada temporalmente</p>
+    </div>
+
+    <div class="lockout-message">
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <p>
+                Has realizado demasiados intentos fallidos de inicio de sesión.
+                Por seguridad, tu cuenta ha sido bloqueada temporalmente.
+            </p>
+        </div>
+
+        <div class="lockout-info">
+            <h5>¿Qué hacer ahora?</h5>
+            <ul>
+                <li>Espera unos minutos antes de intentar nuevamente</li>
+                <li>Verifica que estás introduciendo las credenciales correctas</li>
+                <li>Si olvidaste tu contraseña, usa la opción de recuperación</li>
+                <li>Si el problema persiste, contacta al soporte técnico</li>
+            </ul>
+        </div>
+
+        <div class="lockout-tips">
+            <h5>Consejos de seguridad:</h5>
+            <ul>
+                <li>Usa una contraseña fuerte y única</li>
+                <li>Habilita la autenticación de dos factores</li>
+                <li>No compartas tus credenciales con nadie</li>
+                <li>Mantén tu software y navegador actualizados</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="lockout-actions">
+        <a href="{% url 'autho_core:password_reset' %}" class="btn btn-outline-primary">
+            <i class="bi bi-key"></i> Recuperar Contraseña
+        </a>
+        <a href="{% url 'autho_core:login' %}" class="btn btn-primary">
+            <i class="bi bi-arrow-clockwise"></i> Intentar Nuevamente
+        </a>
+    </div>
+
+    <div class="lockout-footer">
+        <p class="text-muted">
+            <i class="bi bi-shield-check"></i>
+            Esta medida de seguridad protege tu cuenta contra accesos no autorizados.
+        </p>
+    </div>
+</div>
+{% endblock %}

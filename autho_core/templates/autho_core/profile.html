@@ -1,0 +1,160 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Mi Perfil - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card profile-card">
+    <div class="auth-header">
+        <h1 class="auth-title">Mi Perfil</h1>
+        <p class="auth-subtitle">Gestiona tu cuenta y configuración</p>
+    </div>
+
+    <div class="profile-section">
+        <div class="profile-info">
+            <div class="profile-avatar">
+                <div class="avatar-placeholder">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+            </div>
+            <div class="profile-details">
+                <h3 class="profile-name">{{ user.get_full_name|default:user.username }}</h3>
+                <p class="profile-email">{{ user.email }}</p>
+                <div class="profile-status">
+                    {% if profile.email_verified %}
+                        <span class="badge bg-success">Email Verificado</span>
+                    {% else %}
+                        <span class="badge bg-warning">Email No Verificado</span>
+                    {% endif %}
+
+                    {% if profile.mfa_enabled %}
+                        <span class="badge bg-info">2FA Habilitado</span>
+                    {% else %}
+                        <span class="badge bg-secondary">2FA Deshabilitado</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'autho_core:profile_edit' %}" class="btn btn-outline-primary">
+                <i class="bi bi-pencil"></i> Editar Perfil
+            </a>
+            <a href="{% url 'autho_core:password_change' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-key"></i> Cambiar Contraseña
+            </a>
+        </div>
+    </div>
+
+    <div class="profile-divider"></div>
+
+    <div class="security-section">
+        <h4 class="section-title">Configuración de Seguridad</h4>
+
+        <div class="security-options">
+            <div class="security-option">
+                <div class="security-option-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="security-option-content">
+                    <h5>Autenticación de Dos Factores</h5>
+                    <p class="text-muted">
+                        {% if profile.mfa_enabled %}
+                            2FA está habilitado en tu cuenta.
+                        {% else %}
+                            Protege tu cuenta con autenticación de dos factores.
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="security-option-action">
+                    {% if profile.mfa_enabled %}
+                        <a href="{% url 'autho_core:mfa_disable' %}" class="btn btn-outline-danger btn-sm">
+                            Deshabilitar
+                        </a>
+                    {% else %}
+                        <a href="{% url 'autho_core:mfa_setup' %}" class="btn btn-primary btn-sm">
+                            Habilitar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="security-option">
+                <div class="security-option-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="security-option-content">
+                    <h5>Historial de Seguridad</h5>
+                    <p class="text-muted">
+                        Revisa los eventos de seguridad recientes de tu cuenta.
+                    </p>
+                </div>
+                <div class="security-option-action">
+                    <a href="{% url 'autho_core:security_history' %}" class="btn btn-outline-secondary btn-sm">
+                        Ver Historial
+                    </a>
+                </div>
+            </div>
+
+            <div class="security-option">
+                <div class="security-option-icon">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+                <div class="security-option-content">
+                    <h5>Información de Sesión</h5>
+                    <p class="text-muted">
+                        Último login: {{ profile.last_login_ip|default:"N/A" }}
+                    </p>
+                </div>
+                <div class="security-option-action">
+                    <span class="text-muted small">
+                        {{ profile.last_login_ip|default:"No disponible" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-divider"></div>
+
+    <div class="recent-activity">
+        <h4 class="section-title">Actividad Reciente</h4>
+
+        {% if security_events %}
+            <div class="activity-list">
+                {% for event in security_events %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            {% if event.event_type == 'LOGIN_SUCCESS' %}
+                                <i class="bi bi-box-arrow-in-right text-success"></i>
+                            {% elif event.event_type == 'LOGOUT' %}
+                                <i class="bi bi-box-arrow-right text-secondary"></i>
+                            {% elif event.event_type == 'PASSWORD_CHANGE' %}
+                                <i class="bi bi-key text-warning"></i>
+                            {% elif event.event_type == 'MFA_ENABLED' %}
+                                <i class="bi bi-shield-check text-info"></i>
+                            {% else %}
+                                <i class="bi bi-info-circle text-primary"></i>
+                            {% endif %}
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-title">{{ event.get_event_type_display }}</p>
+                            <p class="activity-time">{{ event.timestamp|date:"d M Y, H:i" }}</p>
+                            {% if event.ip_address %}
+                                <p class="activity-ip">IP: {{ event.ip_address }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No hay actividad reciente.</p>
+        {% endif %}
+    </div>
+
+    <div class="profile-footer">
+        <a href="{% url 'autho_core:logout' %}" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </a>
+    </div>
+</div>
+{% endblock %}

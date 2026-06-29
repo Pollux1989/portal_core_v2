@@ -1,0 +1,124 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Editar Perfil - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card profile-edit-card">
+    <div class="auth-header">
+        <h1 class="auth-title">Editar Perfil</h1>
+        <p class="auth-subtitle">Actualiza tu información personal</p>
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+                {{ form.username.label }}
+            </label>
+            {{ form.username }}
+            {% if form.username.help_text %}
+                <small class="form-text text-muted">{{ form.username.help_text }}</small>
+            {% endif %}
+            {% if form.username.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.username.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">
+                {{ form.email.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.help_text %}
+                <small class="form-text text-muted">{{ form.email.help_text }}</small>
+            {% endif %}
+            {% if form.email.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.email.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                    {{ form.first_name.label }}
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.first_name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                    {{ form.last_name.label }}
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.last_name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-info-section">
+            <h5>Información de Seguridad</h5>
+            <div class="security-status">
+                <div class="security-item">
+                    <span class="security-label">Email Verificado:</span>
+                    <span class="security-value {% if profile.email_verified %}text-success{% else %}text-warning{% endif %}">
+                        {% if profile.email_verified %}
+                            <i class="bi bi-check-circle-fill"></i> Sí
+                        {% else %}
+                            <i class="bi bi-x-circle-fill"></i> No
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="security-item">
+                    <span class="security-label">2FA Habilitado:</span>
+                    <span class="security-value {% if profile.mfa_enabled %}text-success{% else %}text-secondary{% endif %}">
+                        {% if profile.mfa_enabled %}
+                            <i class="bi bi-check-circle-fill"></i> Sí
+                        {% else %}
+                            <i class="bi bi-x-circle-fill"></i> No
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="security-item">
+                    <span class="security-label">Último Login:</span>
+                    <span class="security-value">
+                        {{ profile.last_login_ip|default:"N/A" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </form>
+
+    <div class="auth-footer">
+        <div class="auth-links">
+            <a href="{% url 'autho_core:profile' %}" class="auth-link">
+                <i class="bi bi-arrow-left"></i> Volver al perfil
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

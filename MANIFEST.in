@@ -1,0 +1,29 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include AUTHORS.rst
+include CHANGELOG.md
+
+recursive-include autho_core/templates *.html *.txt
+recursive-include autho_core/static *.css *.js *.png *.jpg *.jpeg *.gif *.svg *.ico *.woff *.woff2 *.ttf *.eot
+recursive-include autho_core/locale *.po *.mo
+recursive-include autho_core/management *.py
+
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.swp
+global-exclude *~
+global-exclude .git*
+global-exclude .hg*
+global-exclude .svn*
+global-exclude venv*
+global-exclude env*
+global-exclude .tox
+global-exclude .mypy_cache
+global-exclude .pytest_cache
+global-exclude htmlcov
+global-exclude .coverage
+global-exclude *.egg-info
+global-exclude dist
+global-exclude build

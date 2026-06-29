@@ -1,0 +1,109 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Verificar 2FA - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card mfa-verify-card">
+    <div class="mfa-icon">
+        <i class="bi bi-shield-lock-fill"></i>
+    </div>
+
+    <div class="auth-header">
+        <h1 class="auth-title">Verificar Autenticación de Dos Factores</h1>
+        <p class="auth-subtitle">Introduce el código de tu aplicación de autenticación</p>
+    </div>
+
+    <div class="mfa-info">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i>
+            <p>
+                Abre tu aplicación de autenticación (Google Authenticator, Authy, etc.)
+                e introduce el código de 6 dígitos que se muestra actualmente.
+            </p>
+        </div>
+    </div>
+
+    <form method="post" class="auth-form mfa-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="{{ form.code.id_for_label }}" class="form-label">
+                {{ form.code.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.code }}
+            {% if form.code.help_text %}
+                <small class="form-text text-muted">{{ form.code.help_text }}</small>
+            {% endif %}
+            {% if form.code.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.code.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mfa-tips">
+            <h6>Consejos:</h6>
+            <ul>
+                <li>El código cambia cada 30 segundos</li>
+                <li>Asegúrate de introducir el código actual</li>
+                <li>Verifica que la hora de tu dispositivo sea correcta</li>
+                <li>Si no tienes acceso a tu aplicación, usa un código de respaldo</li>
+            </ul>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-shield-check"></i> Verificar
+            </button>
+        </div>
+    </form>
+
+    <div class="auth-footer">
+        <div class="auth-links">
+            <a href="{% url 'autho_core:logout' %}" class="auth-link">
+                <i class="bi bi-x-circle"></i> Cancelar y salir
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-focus on code input
+    const codeInput = document.getElementById('{{ form.code.id_for_label }}');
+    if (codeInput) {
+        codeInput.focus();
+
+        // Auto-submit when 6 digits are entered
+        codeInput.addEventListener('input', function() {
+            if (this.value.length === 6) {
+                this.form.submit();
+            }
+        });
+    }
+
+    // Countdown timer for code expiration
+    let countdown = 30;
+    const countdownElement = document.getElementById('countdown');
+
+    if (countdownElement) {
+        const interval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(interval);
+                countdownElement.textContent = '30';
+                countdown = 30;
+            }
+        }, 1000);
+    }
+});
+</script>
+{% endblock %}

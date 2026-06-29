@@ -6,6 +6,12 @@ Login
 
 {% block auth_content %}
 
+{% if form.non_field_errors %}
+<div style="color:red;">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+
 <h1>Login</h1>
 
 <form method="post">

@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from apps.security.views import lockout_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("apps.dashboard.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("profile/",include("apps.profiles.urls")),
+    path("lockout-test/", lockout_view),
 ]

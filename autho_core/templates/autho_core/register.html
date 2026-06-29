@@ -1,0 +1,210 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Registrarse - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <div class="auth-header">
+        <h1 class="auth-title">Crear Cuenta</h1>
+        <p class="auth-subtitle">Únete a nosotros hoy</p>
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                    {{ form.first_name.label }}
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.first_name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                    {{ form.last_name.label }}
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.last_name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+                {{ form.username.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.username }}
+            {% if form.username.help_text %}
+                <small class="form-text text-muted">{{ form.username.help_text }}</small>
+            {% endif %}
+            {% if form.username.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.username.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">
+                {{ form.email.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.help_text %}
+                <small class="form-text text-muted">{{ form.email.help_text }}</small>
+            {% endif %}
+            {% if form.email.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.email.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label">
+                {{ form.password1.label }} <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+                {{ form.password1 }}
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+            {% if form.password1.help_text %}
+                <small class="form-text text-muted">{{ form.password1.help_text }}</small>
+            {% endif %}
+            {% if form.password1.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.password1.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.password2.id_for_label }}" class="form-label">
+                {{ form.password2.label }} <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+                {{ form.password2 }}
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+            {% if form.password2.help_text %}
+                <small class="form-text text-muted">{{ form.password2.help_text }}</small>
+            {% endif %}
+            {% if form.password2.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.password2.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form.terms_and_conditions }}
+            <label class="form-check-label" for="{{ form.terms_and_conditions.id_for_label }}">
+                {{ form.terms_and_conditions.label }}
+            </label>
+            {% if form.terms_and_conditions.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.terms_and_conditions.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+                Crear Cuenta
+            </button>
+        </div>
+    </form>
+
+    <div class="auth-footer">
+        <div class="auth-divider"></div>
+        <div class="auth-links">
+            <span class="auth-text">¿Ya tienes cuenta?</span>
+            <a href="{% url 'autho_core:login' %}" class="auth-link">
+                Inicia sesión aquí
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    function setupPasswordToggle(toggleId, inputId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+
+        if (toggle && input) {
+            toggle.addEventListener('click', function() {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+
+                const icon = this.querySelector('i');
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+            });
+        }
+    }
+
+    setupPasswordToggle('togglePassword1', '{{ form.password1.id_for_label }}');
+    setupPasswordToggle('togglePassword2', '{{ form.password2.id_for_label }}');
+
+    // Password strength indicator
+    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+    const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+
+    if (password1 && password2) {
+        password1.addEventListener('input', function() {
+            const strength = checkPasswordStrength(this.value);
+            updateStrengthIndicator(strength);
+        });
+
+        password2.addEventListener('input', function() {
+            if (this.value !== password1.value) {
+                this.setCustomValidity('Las contraseñas no coinciden');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        return strength;
+    }
+
+    function updateStrengthIndicator(strength) {
+        const indicator = document.getElementById('password-strength');
+        if (!indicator) return;
+
+        const levels = ['Muy débil', 'Débil', 'Media', 'Fuerte', 'Muy fuerte'];
+        const colors = ['danger', 'danger', 'warning', 'success', 'success'];
+
+        indicator.textContent = levels[strength - 1] || '';
+        indicator.className = `form-text text-${colors[strength - 1] || 'muted'}`;
+    }
+});
+</script>
+{% endblock %}

@@ -1,18 +1,17 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.views.decorators.debug import sensitive_post_parameters
 
-from django.contrib.auth import (
-    login,
-    logout
-)
-
-from .forms import (
-    LoginForm,
-    RegisterForm
-)
+from .forms import LoginForm, RegisterForm
 
 
+# -----------------------------
+# LOGIN VIEW
+# -----------------------------
+@sensitive_post_parameters("password")
 def login_view(request):
 
+    # If already authenticated → redirect
     if request.user.is_authenticated:
         return redirect("dashboard_home")
 
@@ -21,12 +20,14 @@ def login_view(request):
     if request.method == "POST":
 
         if form.is_valid():
-
             user = form.get_user()
-
             login(request, user)
-
             return redirect("dashboard_home")
+
+        # Optional: keep form errors visible
+        # (important for UX + debugging)
+        # else:
+        #     print(form.errors)
 
     return render(
         request,
@@ -35,11 +36,13 @@ def login_view(request):
     )
 
 
+# -----------------------------
+# REGISTER VIEW
+# -----------------------------
+@sensitive_post_parameters("password", "password_confirm")
 def register_view(request):
 
-    form = RegisterForm(
-        request.POST or None
-    )
+    form = RegisterForm(request.POST or None)
 
     if request.method == "POST":
 
@@ -47,12 +50,10 @@ def register_view(request):
 
             user = form.save(commit=False)
 
+            # Normalize email (clean single responsibility)
             user.email = user.email.strip().lower()
 
-            user.set_password(
-                form.cleaned_data["password"]
-            )
-
+            user.set_password(form.cleaned_data["password"])
             user.save()
 
             login(request, user)
@@ -66,8 +67,9 @@ def register_view(request):
     )
 
 
+# -----------------------------
+# LOGOUT VIEW
+# -----------------------------
 def logout_view(request):
-
     logout(request)
-
     return redirect("login")

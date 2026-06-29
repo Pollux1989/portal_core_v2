@@ -1,0 +1,130 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Configurar 2FA - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card mfa-card">
+    <div class="auth-header">
+        <h1 class="auth-title">Configurar Autenticación de Dos Factores</h1>
+        <p class="auth-subtitle">Protege tu cuenta con un código adicional</p>
+    </div>
+
+    <div class="mfa-intro">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i>
+            <p>
+                La autenticación de dos factores (2FA) añade una capa extra de seguridad a tu cuenta.
+                Además de tu contraseña, necesitarás un código generado por una aplicación de autenticación.
+            </p>
+        </div>
+
+        <div class="mfa-steps">
+            <h5>Pasos para configurar 2FA:</h5>
+            <ol>
+                <li>Descarga una aplicación de autenticación (Google Authenticator, Authy, etc.)</li>
+                <li>Escanea el código QR o introduce el código manualmente</li>
+                <li>Introduce el código de 6 dígitos generado por la aplicación</li>
+                <li>¡Listo! Tu cuenta estará protegida con 2FA</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="mfa-qr-section">
+        <h5>Código QR</h5>
+        <div class="mfa-qr-container">
+            {% if qr_code %}
+                <img src="data:image/png;base64,{{ qr_code }}" alt="Código QR para 2FA" class="mfa-qr-image">
+            {% else %}
+                <div class="mfa-qr-placeholder">
+                    <i class="bi bi-qr-code"></i>
+                    <p>Código QR no disponible</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mfa-secret-section">
+            <h6>Código manual:</h6>
+            <div class="input-group">
+                <input type="text" class="form-control" value="{{ secret }}" readonly id="mfaSecret">
+                <button class="btn btn-outline-secondary" type="button" id="copySecret">
+                    <i class="bi bi-clipboard"></i> Copiar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" class="auth-form mfa-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="{{ form.code.id_for_label }}" class="form-label">
+                {{ form.code.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.code }}
+            {% if form.code.help_text %}
+                <small class="form-text text-muted">{{ form.code.help_text }}</small>
+            {% endif %}
+            {% if form.code.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.code.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-shield-check"></i> Verificar y Habilitar 2FA
+            </button>
+        </div>
+    </form>
+
+    <div class="auth-footer">
+        <a href="{% url 'autho_core:profile' %}" class="auth-link">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Copy secret to clipboard
+    const copyButton = document.getElementById('copySecret');
+    const secretInput = document.getElementById('mfaSecret');
+
+    if (copyButton && secretInput) {
+        copyButton.addEventListener('click', function() {
+            secretInput.select();
+            secretInput.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                navigator.clipboard.writeText(secretInput.value);
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check"></i> Copiado';
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-success');
+
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-secondary');
+                }, 2000);
+            } catch (err) {
+                console.error('Error al copiar:', err);
+            }
+        });
+    }
+
+    // Auto-focus on code input
+    const codeInput = document.getElementById('{{ form.code.id_for_label }}');
+    if (codeInput) {
+        codeInput.focus();
+    }
+});
+</script>
+{% endblock %}

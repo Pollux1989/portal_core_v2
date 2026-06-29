@@ -1,0 +1,60 @@
+{% extends 'autho_core/base.html' %}
+
+{% block title %}Registro Exitoso - Autho Core{% endblock %}
+
+{% block content %}
+<div class="auth-card success-card">
+    <div class="success-icon">
+        <i class="bi bi-check-circle-fill"></i>
+    </div>
+
+    <div class="auth-header">
+        <h1 class="auth-title">¡Registro Exitoso!</h1>
+        <p class="auth-subtitle">Tu cuenta ha sido creada correctamente</p>
+    </div>
+
+    <div class="success-message">
+        <div class="alert alert-success">
+            <i class="bi bi-envelope-check"></i>
+            <p>
+                Hemos enviado un correo de verificación a tu dirección de correo electrónico.
+                Por favor, verifica tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.
+            </p>
+        </div>
+
+        <div class="next-steps">
+            <h5>Próximos pasos:</h5>
+            <ol>
+                <li>Revisa tu correo electrónico (incluida la carpeta de spam)</li>
+                <li>Haz clic en el enlace de verificación</li>
+                <li>Inicia sesión con tus credenciales</li>
+                <li>Configura tu perfil y opciones de seguridad</li>
+            </ol>
+        </div>
+
+        <div class="security-tips">
+            <h5>Consejos de seguridad:</h5>
+            <ul>
+                <li>Usa una contraseña fuerte y única</li>
+                <li>Habilita la autenticación de dos factores</li>
+                <li>Mantén tu información personal actualizada</li>
+                <li>Revisa regularmente tu historial de seguridad</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="success-actions">
+        <a href="{% url 'autho_core:login' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+        </a>
+    </div>
+
+    <div class="success-footer">
+        <p class="text-muted">
+            <i class="bi bi-info-circle"></i>
+            Si no recibes el correo en los próximos minutos, verifica que la dirección
+            sea correcta o solicita un nuevo correo de verificación.
+        </p>
+    </div>
+</div>
+{% endblock %}
